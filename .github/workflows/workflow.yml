@@ -1,10 +1,17 @@
-name: Sample GitHub Action
+name: Docker Build & Run
 on: push
+
 jobs:
-  build:
+  docker-job:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      - name: Run a Simple Command
-        run: echo "Hello, GitHub Actions!"
+
+      - name: Build the Docker Image
+        run: |
+          docker build -t my-container .
+
+      - name: Run the Docker Container
+        run: |
+          docker run my-container
