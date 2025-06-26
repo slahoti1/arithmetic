@@ -1,17 +1,26 @@
-name: Run MATLAB Script
-on: [push]
-jobs:
-  my-job:
-    name: Run MATLAB Script
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-      - name: Set up MATLAB
-        uses: matlab-actions/setup-matlab@v2
-        with:
-          release: R2024a
-      - name: Run script
-        uses: matlab-actions/run-command@v2
-        with:
-          command: ver
+matlab-sanity:
+runs-on: matlab
+
+steps:
+- name: Cleanup Workspace
+  run: |
+    if [ -n "$GITHUB_WORKSPACE" ]; then
+      rm -rf "$GITHUB_WORKSPACE"/* "$GITHUB_WORKSPACE"/.[!.]*
+    else
+      echo "GITHUB_WORKSPACE is NOT set"
+    fi
+
+- name: Checkout MATLAB Repository
+  uses: actions/checkout@v4
+  with:
+    repository: <repo Details>
+    ref: refs/heads/main
+    token: ${{ secrets.DEVOPS_GITHUB_TOKEN }}
+
+- name: Add MATLAB to PATH
+  run: echo "/usr/local/MATLAB/R2024a/bin" >> $GITHUB_PATH
+
+- name: Run MATLAB Script
+  uses: matlab-actions/run-command@v2
+  with:
+    command: runMe
