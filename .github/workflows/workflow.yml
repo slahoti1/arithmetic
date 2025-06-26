@@ -1,26 +1,34 @@
-matlab-sanity:
-runs-on: matlab
+name: matlab-sanity
 
-steps:
-- name: Cleanup Workspace
-  run: |
-    if [ -n "$GITHUB_WORKSPACE" ]; then
-      rm -rf "$GITHUB_WORKSPACE"/* "$GITHUB_WORKSPACE"/.[!.]*
-    else
-      echo "GITHUB_WORKSPACE is NOT set"
-    fi
+on:
+  push:
+    branches:
+      - main
 
-- name: Checkout MATLAB Repository
-  uses: actions/checkout@v4
-  with:
-    repository: <repo Details>
-    ref: refs/heads/main
-    token: ${{ secrets.DEVOPS_GITHUB_TOKEN }}
+jobs:
+  matlab-sanity:
+    runs-on: [self-hosted, matlab]
 
-- name: Add MATLAB to PATH
-  run: echo "/usr/local/MATLAB/R2024a/bin" >> $GITHUB_PATH
+    steps:
+      - name: Cleanup Workspace
+        run: |
+          if [ -n "$GITHUB_WORKSPACE" ]; then
+            rm -rf "$GITHUB_WORKSPACE"/* "$GITHUB_WORKSPACE"/.[!.]*
+          else
+            echo "GITHUB_WORKSPACE is NOT set"
+          fi
 
-- name: Run MATLAB Script
-  uses: matlab-actions/run-command@v2
-  with:
-    command: runMe
+      - name: Checkout MATLAB Repository
+        uses: actions/checkout@v4
+        with:
+          repository: your-org/your-repo
+          ref: refs/heads/main
+          token: ${{ secrets.DEVOPS_GITHUB_TOKEN }}
+
+      - name: Add MATLAB to PATH
+        run: echo "/usr/local/MATLAB/R2024a/bin" >> $GITHUB_PATH
+
+      - name: Run MATLAB Script
+        uses: matlab-actions/run-command@v2
+        with:
+          command: runMe
